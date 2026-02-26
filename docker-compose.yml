@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpw
+      MARIADB_DATABASE: taskdb
+      MARIADB_USER: appuser
+      MARIADB_PASSWORD: apppw
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: mysql+pymysql://appuser:apppw@db:3306/taskdb
+      JWT_SECRET_KEY: 99KNLEkTmLP3conBB58wiGsny1CFQXuEymoKw3T2k0M=
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy

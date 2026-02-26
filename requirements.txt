@@ -1,0 +1,5 @@
+Flask
+Flask-Migrate
+PyMySQL
+python-dotenv
+flask-jwt-extended
