@@ -56,9 +56,14 @@ jobs:
 
       - name: Run tests
         env:
+          PYTHONPATH: .
           TEST_DATABASE_URL: "mysql+pymysql://appuser:apppw@127.0.0.1:3306/taskdb"
           JWT_SECRET_KEY: "ci-only-not-secret"
         run: |
           pytest -q
-          
+      - name: Dump MariaDB logs (on failure)
+        if: failure()
+        run: |
+          docker ps -a
+          docker logs ${{ job.services.mariadb.id }}
 
