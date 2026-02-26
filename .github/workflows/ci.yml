@@ -7,10 +7,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     services:
       mariadb:
-        image: mariadb:11
+        image: mariadb:10.11
         env:
           MARIADB_USER: appuser
           MARIADB_PASSWORD: apppw
