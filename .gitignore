@@ -19,3 +19,6 @@ instance/
 # IDE
 .vscode/
 .idea/
+
+~$*
+.pytest_cache/
