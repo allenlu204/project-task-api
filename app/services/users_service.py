@@ -8,11 +8,7 @@ Created on Sat Feb 21 11:17:14 2026
 from app.extensions import db
 from app.models import User
 from sqlalchemy.exc import NoResultFound
-class EmailAlreadyExistsError(ValueError):
-    pass
-    
-class UserNotFoundError(ValueError):
-    pass
+from app.domain.errors import UserNotFoundError,EmailAlreadyExistsError
 
 def create_user(username:str, email:str, password:str):
     existing = db.session.execute(
