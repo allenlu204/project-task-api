@@ -1,5 +1,9 @@
 Flask
 Flask-Migrate
+Flask-SQLAlchemy
+SQLAlchemy
 PyMySQL
 python-dotenv
 flask-jwt-extended
+gunicorn
+psycopg2-binary
