@@ -5,8 +5,8 @@ Created on Sat Feb 21 11:17:14 2026
 @author: User
 """
 
-from ..extensions import db
-from ..models import User
+from app.extensions import db
+from app.models import User
 from sqlalchemy.exc import NoResultFound
 class EmailAlreadyExistsError(ValueError):
     pass
@@ -14,7 +14,7 @@ class EmailAlreadyExistsError(ValueError):
 class UserNotFoundError(ValueError):
     pass
 
-def create_user(username:str, email:str, password_hash:str):
+def create_user(username:str, email:str, password:str):
     existing = db.session.execute(
         db.select(User).where(User.email == email)
     ).scalar_one_or_none()
@@ -22,7 +22,8 @@ def create_user(username:str, email:str, password_hash:str):
     if existing:
         raise EmailAlreadyExistsError("email exists")
     
-    user = User(username = username, email = email, password_hash = password_hash)
+    user = User(username = username, email = email)
+    user.set_password(password)
     db.session.add(user)
     db.session.commit()
     return user

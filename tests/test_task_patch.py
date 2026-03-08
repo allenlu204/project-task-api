@@ -17,7 +17,7 @@ def test_patch_owner_ok(client,login_token):
     resp = client.post(f"/api/v1/users/{user_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = headers)
     assert resp.status_code == 201
     # with app.app_context():
     #     stmt = select(Task).where(Task.id == task_id)
@@ -40,7 +40,7 @@ def test_patch_non_owner_403(client,login_token,app):
     resp = client.post(f"/api/v1/users/{owner_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = owner_headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     with app.app_context():
@@ -68,13 +68,20 @@ def test_patch_no_token_401(client,login_token):
     resp = client.post(f"/api/v1/users/{owner_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = owner_headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     task_patch = client.patch(f"/api/v1/tasks/{task_id}",
                              json = {"title":"new"},
                              )
     assert task_patch.status_code == 401
+    assert task_patch.is_json
+    err = task_patch.get_json()["error"]
+    assert err["code"] == 401
+    assert err["type"] == "unauthorized"
+    assert isinstance(err.get("message"),str) and err["message"].strip()
+    
+    
 def test_patch_no_json_400(client,login_token):
     headers,user_id = login_token(
         username = "John",
@@ -83,7 +90,7 @@ def test_patch_no_json_400(client,login_token):
     resp = client.post(f"/api/v1/users/{user_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     task_patch = client.patch(f"/api/v1/tasks/{task_id}",
@@ -98,7 +105,7 @@ def test_patch_invalid_json_400(client,login_token):
     resp = client.post(f"/api/v1/users/{user_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     task_patch = client.patch(f"/api/v1/tasks/{task_id}",
@@ -114,7 +121,7 @@ def test_patch_invalid_status_400(client,login_token):
     resp = client.post(f"/api/v1/users/{user_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     task_patch = client.patch(f"/api/v1/tasks/{task_id}",
@@ -130,7 +137,7 @@ def test_patch_title_null_400(client,login_token,app):
     resp = client.post(f"/api/v1/users/{user_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     task_patch = client.patch(f"/api/v1/tasks/{task_id}",
@@ -150,7 +157,7 @@ def test_patch_status_null_400(client,login_token,app):
     resp = client.post(f"/api/v1/users/{user_id}/tasks",
                        json = {"title":"old",
                                "description":"N",
-                               "status":"todo"})
+                               "status":"todo"},headers = headers)
     assert resp.status_code == 201
     task_id = resp.get_json()["id"]
     task_patch = client.patch(f"/api/v1/tasks/{task_id}",
@@ -162,6 +169,6 @@ def test_patch_status_null_400(client,login_token,app):
         stmt = select(Task).where(Task.id == task_id)
         task = db.session.execute(stmt).scalar_one()
         assert task.status == "todo"
-    
+
     
     

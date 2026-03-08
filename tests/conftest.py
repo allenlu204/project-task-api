@@ -9,7 +9,8 @@ import pytest
 from app import create_app
 from app.extensions import db
 from app.models.user import User
-
+from dotenv import load_dotenv
+load_dotenv()
 @pytest.fixture(scope = "function")
 def app():
     test_db_url = os.getenv("TEST_DATABASE_URL")
@@ -54,8 +55,8 @@ def create_user(app):
         with app.app_context():
             user = User(
                 username = username,
-                email = email,
-                password_hash = password)
+                email = email)
+            user.set_password(password)
             db.session.add(user)
             db.session.commit()
             return user.id

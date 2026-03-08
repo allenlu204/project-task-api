@@ -6,12 +6,13 @@ Created on Sat Feb 21 11:17:14 2026
 """
 
 from flask import Blueprint, request, abort
-from ..services.users_service import (
+from app.services.users_service import (
     create_user,
     get_user_by_id,
     EmailAlreadyExistsError,
     UserNotFoundError,
     )
+from app.exceptions import BadRequestError,UnauthorizedError,ForbiddenError,NotFoundError,ConflictError
 
 bp = Blueprint("users", __name__)
 
@@ -26,7 +27,7 @@ def create_user_route():
     if not username or not email or not password:
         abort(400)
     try:
-        user = create_user(username,email,password_hash = password)
+        user = create_user(username,email,password = password)
     except EmailAlreadyExistsError:
         abort(400)
     

@@ -1,0 +1,243 @@
+openapi: 3.0.3
+info: 
+  title: Task API
+  version: "1.0.0"
+servers: 
+  - url: /
+components: 
+  securitySchemes: 
+    bearerAuth: 
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas: 
+    LoginRequest: 
+      type: object
+      required: [ email, password ]
+      properties: 
+        email: 
+          type: string
+          example: "test@example.com"
+        password: 
+          type: string
+          example: "123456"
+    LoginResponse: 
+      type: object
+      required: [ access_token, user_id ]
+      properties: 
+        access_token: { type: string }
+        user_id: {type: integer, example: 1 }
+    CreateUserRequest:
+      type: object
+      required: [ username, email, password ]
+      properties: 
+        username: { type: string, example: "John" }
+        email: { type: string, example: "John@example.com" }
+        password: { type: string, example: "123456" }
+    UserResponse:
+      type: object
+      properties: 
+        id: { type: integer, example: 1 }
+        username: { type: string, example: "John" }
+        email: { type: string, example: "John@example.com" }
+    CreateTaskRequest: 
+      type: object
+      required: [ title ]
+      properties: 
+        title: { type: string, example: "test task" }
+        description: { type: string, nullable: true, example: null }
+        status: 
+          type: string
+          enum: [ "todo", "doing", "done" ]
+          example: "todo"
+    PatchTaskRequest:
+      type: object
+      properties: 
+        title: { type: string, example: "test task" }
+        description: { type: string, nullable: true, example: "new title" }
+        status: 
+          type: string
+          enum: [ todo, doing, done ]
+    TaskResponse: 
+      type: object
+      properties: 
+        id: { type: integer, example: 1 }
+        owner_id: { type: integer, example: 1 }
+        title: { type: string, example: "test task" }
+        description: { type: string, nullable: true, example: " ... " }
+        status: { type: string, example: "todo" }
+
+paths:
+  /api/v1/auth/login: 
+    post:
+      summary: Login
+      requestBody: 
+        required: true
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/LoginRequest" 
+      responses: 
+        "200":
+          description: OK
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/LoginResponse" 
+        "401":
+          description: Unauthorized
+        "404":
+          description: User Not Found
+  /api/v1/users/:
+    post:
+      summary: Create user
+      requestBody:
+        required: true
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/CreateUserRequest" 
+      responses:
+        "201":
+          description: Created
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/UserResponse" 
+        "400":
+          description: Bad Request
+  /api/v1/users/{user_id}/tasks:
+    get:
+      summary: List tasks for user (owner only)
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: user_id
+          required: true
+          schema: { type: integer }
+        - in: query
+          name: status
+          required: false
+          schema: 
+            type: string
+            enum: [ "todo", "doing", "done" ]
+      responses:
+        "200":
+          description: OK
+          content: 
+            application/json: 
+              schema: 
+                type: array
+                items: { $ref: "#/components/schemas/TaskResponse" }
+        "401": 
+          description: Unauthorized
+        "403": 
+          description: Forbidden
+        "404":
+          description: Not Found
+    post: 
+      summary: Create tasks for user
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: user_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content: 
+          application/json: 
+            schema: { $ref: "#/components/schemas/CreateTaskRequest" }
+      responses:
+        "201":
+          description: Created
+          content: 
+            application/json: 
+              schema: { $ref: "#/components/schemas/TaskResponse" }
+        "400": 
+          description: Bad Request
+        "401": 
+          description: Unauthorized
+        "403": 
+          description: Forbidden
+        "404": 
+          description: Not Found
+  /api/v1/tasks/{task_id}:
+    get:
+      summary: Get task (owner only)
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: OK
+          content: 
+            application/json: 
+              schema: { $ref: "#/components/schemas/TaskResponse" }
+        "401": 
+          description: Unauthorized
+        "403": 
+          description: Forbidden
+        "404": 
+          description: Not Found
+    patch:
+      summary: Patch task (owner only)
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content: 
+          application/json: 
+            schema: { $ref: "#/components/schemas/PatchTaskRequest" }
+      responses:
+        "200":
+          description: OK
+          content: 
+            application/json: 
+              schema: { $ref: "#/components/schemas/TaskResponse" }
+        "400": 
+          description: Bad Request
+        "401": 
+          description: Unauthorized
+        "403": 
+          description: Forbidden
+        "404": 
+          description: Not Found
+    delete: 
+      summary: Delete task (owner only)
+      security: 
+        - bearerAuth: []
+      parameters: 
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: No Content
+        "401": 
+          description: Unauthorized
+        "403": 
+          description: Forbidden
+        "404": 
+          description: Not Found
+
+
+
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: OK

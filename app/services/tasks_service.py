@@ -8,22 +8,24 @@ from flask import jsonify
 from ..extensions import db
 from ..models import Task
 from .users_service import get_user_by_id
+from app.domain.errors import (PermissionDeniedError,
+                               UserNotFoundError,
+                               EmailAlreadyExistsError,
+                               TaskNotFoundError,
+                               InvalidTaskPayloadError,
+                               InvalidTaskStatusError)
 
 ALLOWED_STATUS = {"todo","doing","done"}
 ALLOWED_FIELDS = ["title","description","status"]
 
-class TaskNotFoundError(ValueError):
-    pass
-class InvalidTaskPayloadError(ValueError):
-    pass
-class InvalidTaskStatusError(ValueError):
-    pass
-        
 
 
-def create_task_for_user(owner_id:int,title:str,description:str|None = None,status = "todo"):
+def create_task_for_user(actor_user_id:int,owner_id:int,title:str,description:str|None = None,status = "todo"):
+    if actor_user_id != owner_id:
+        raise PermissionDeniedError()
     get_user_by_id(owner_id)
-    if not title:
+    
+    if not isinstance(title, str) or not title.strip():
         raise InvalidTaskPayloadError("title is required")
     
     if status not in ALLOWED_STATUS:
@@ -37,21 +39,36 @@ def create_task_for_user(owner_id:int,title:str,description:str|None = None,stat
     # 另外改格式的話這層會直接卡到
     # service不處理是否會做為api回應的問題
     
-def list_tasks_for_user(owner_id:int, status:str|None = None):
+def list_tasks_for_user(actor_user_id:int,owner_id:int, status:str|None = None):
+    if actor_user_id != owner_id:
+        raise PermissionDeniedError()
     get_user_by_id(owner_id)
+    if status is not None and status not in ALLOWED_STATUS:
+        raise InvalidTaskStatusError("invalid status")
+    
     stmt = db.select(Task).where(Task.owner_id == owner_id)
     if status is not None:
         stmt = stmt.where(Task.status == status)
     stmt = stmt.order_by(Task.id.desc())
-    tasks = db.execute(stmt).scalar().all()
+    tasks = db.session.execute(stmt).scalars().all()
+    # 先取得一串物件再用all
     return tasks
+
 def get_task_by_id(task_id:int):
     task = db.session.get(Task,task_id)
     if task is None:
         raise TaskNotFoundError("task not found")  
     return task
 
+def get_task_for_actor(*,actor_user_id:int,task_id:int):
+    task = get_task_by_id(task_id)
+    if task.owner_id != actor_user_id:
+        raise PermissionDeniedError()
+    return task
+
 def update_task(task:Task,data:dict):
+    if not isinstance(data, dict):
+        raise InvalidTaskPayloadError()
     updates = {k:v for k,v in data.items() if k in ALLOWED_FIELDS }
     # for k, v in data.items():
     #     if k in ALLOWED_FIELDS:
@@ -97,8 +114,8 @@ def update_task(task:Task,data:dict):
     # 多資源、多步驟、需要原子性 → commit 在 更上層（route / use-case）（B）
     return task
 
-def delete_task(task_id:int):
-    task = get_task_by_id(task_id)
+def delete_task(*,actor_user_id:int,task_id:int):
+    task = get_task_for_actor(actor_user_id = actor_user_id,task_id = task_id)
     db.session.delete(task)
     db.session.commit()
 

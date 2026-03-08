@@ -4,7 +4,7 @@ Created on Tue Feb 17 16:53:29 2026
 
 @author: User
 """
-
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
@@ -16,6 +16,37 @@ jwt = JWTManager()
 def init_extensions(app):
     # 統一在這裡初始化所有 extensions。
     jwt.init_app(app)
+    @jwt.unauthorized_loader
+    def jwt_missing_token_callback(reason):
+        return jsonify({
+            "error" : {
+                "code" : 401,
+                "type" : "unauthorized",
+                "message" : "Missing or invalid Authorization header",
+                "details" : {"reason":reason}
+                }
+            }),401
+    @jwt.invalid_token_loader
+    def jwt_invalid_token_callback(reason):
+        return jsonify({
+            "error" : {
+                "code" : 401,
+                "type" : "unauthorized",
+                "message" : "Invalid token",
+                "details" : {"reason":reason}
+                }
+            }),401
+    @jwt.expired_token_loader
+    def jwt_expired_token_callback(jwt_header,jwt_payload):
+        return jsonify({
+            "error" : {
+                "code" : 401,
+                "type" : "unauthorized",
+                "message" : "Token has expired",
+                "details" : None
+                }
+            }),401
+    
     db.init_app(app)
     migrate.init_app(app,db)
     
