@@ -6,6 +6,7 @@ Created on Wed Feb 18 06:38:47 2026
 """
 from ..extensions import db
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
     __tablename__ = "users"
@@ -17,4 +18,9 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default = True)
     created_at = db.Column(db.DateTime, default = datetime.utcnow)
     tasks = db.relationship("Task",back_populates = "owner",passive_deletes = True)
-    
+
+    def set_password(self,password):
+        self.password_hash = generate_password_hash(password)
+        
+    def check_password(self,password):
+        return check_password_hash(self.password_hash, password)
