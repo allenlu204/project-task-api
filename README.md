@@ -69,6 +69,8 @@ The test critical flow included:
 test can be executed with pytest.
 
 ##how to run
+enviroment variebles
+copy .env.example .env
 Run with Docker
 docker compose up -d
 API documentation:
