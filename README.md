@@ -75,3 +75,12 @@ Run with Docker
 docker compose up -d
 API documentation:
 https://project-task-api-q2o5.onrender.com/docs
+
+##Project structure
+app/ 
+    routes/
+    service/
+    model/
+tests/
+docker-compose.yml
+READNE.md
