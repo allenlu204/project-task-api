@@ -58,10 +58,15 @@ Engineering pratices
 
 ##testing
 Automated testing is implemented with pytest.
+
 The test critical flow included:
-JWT Authentication.
-Ownenship-based Authorization.
-Run test with pytest
+
+ - JWT Authentication.
+ - Ownenship-based Authorization.
+ - TaskCRUD operations.
+ - API error handling.
+
+test can be executed with pytest.
 
 ##how to run
 Run with Docker
