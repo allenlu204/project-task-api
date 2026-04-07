@@ -28,7 +28,6 @@ Engineering practices
 ## Architecture
 The backend follows layer architecture
 
-```text
 client
   |
 routes layer
@@ -86,13 +85,11 @@ tests can be executed with pytest.
 Copy `.env.example` to `.env`.
 
 ### Run with Docker
-```bash
 docker compose up -d
 API documentation:
 https://project-task-api-q2o5.onrender.com/docs
 
 ## Project Structure
-```text
 app/
   routes/
   service/
