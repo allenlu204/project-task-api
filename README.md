@@ -1,76 +1,77 @@
 ## Overview
 This project is a maintainable and secure RESTful Task Management API that demonstrates layered architecture design and ownership-based authorization.
 It prevents unauthorized access to user-owned resources by enforcing JWT authentication and strict resource ownership validation.
-This project also emphasis automatic testing,API documentation, containarized deployment.
+This project also emphasizes automatic testing,API documentation, containarized deployment.
 
-## Highlight
+## Highlights
 JWT authentication
 Ownership-based authorization
 Automatic testing with pytest
-OpenAPI3.0 ducumentation with Swagger UI
-Dockerize deployment
+OpenAPI 3.0 ducumentation with Swagger UI
+Dockerized deployment
 
 ## Tech stack
 Backend
  - Python
  - Flask (Web Framework)
 Database
- - SQLAlchemy2.0 (ORM)
- - MariaDB (Relation Database)
+ - SQLAlchemy 2.0 (ORM)
+ - MariaDB (Relational Database)
 Security
  - JWT Authentication (flask-jwt-extended)
- - Ownership Authorization
+ - Ownership-based authorization
 Engineering practices
  - OpenAPI 3.0 (Swagger UI)
  - Pytest (Automated Testing)
  - Docker & Docker Compose
 
 ## Architecture
-The backend fallows layer architecture
+The backend follows layer architecture
 
-client 
- |
+```text
+client
+  |
 routes layer
- |
+  |
 service layer
- |
+  |
 model layer
- |
+  |
 database
 
-This seperate improve maintainability, testibility and clarity of business logic.
+This seperation improves maintainability, testibility and clarity of business logic.
 
 ## Feature
-Core Feature
+Core Features
  - Full CRUD operations for task management
- - OpenAPI 3.0 interactive API documention (Swagger UI)
+ - OpenAPI 3.0 interactive API documenttaion (Swagger UI)
  - Automated coverage with pytest
- - Containerize deployment using Docker Compose
+ - Containerized deployment using Docker Compose
  - CI pipeline automated validation
-Secure
+Security
  - User authentication with JWT
- - Owership-Based autorization to protect user resources 
-Engineering pratices
- - OpenAPI 3.0 interactive API documention (Swagger UI)
+ - Owership-Based authorization to protect user resources 
+Engineering Pratices
+ - OpenAPI 3.0 interactive API documentation (Swagger UI)
  - Automated coverage with pytest
- - Containerize deployment using Docker Compose
+ - Containerized deployment using Docker Compose
  - CI pipeline automated validation
 
-## testing
+## Testing
 Automated testing is implemented with pytest.
 
-The test critical flow included:
+The critical test flows include:
 
  - JWT Authentication.
- - Ownenship-based Authorization.
- - TaskCRUD operations.
+ - Ownenship-based authorization.
+ - Task CRUD operations.
  - API error handling.
 
-test can be executed with pytest.
+tests can be executed with pytest.
 
-## Document
+## Documents
 - [Test Plan](docs/test-plan-v1.md)
-- [Test Cases](docs/text_cases.md)
+- [Test Cases](docs/test_cases.md)
 
 ## Test Coverage Categories
 
@@ -80,19 +81,22 @@ test can be executed with pytest.
 - **Validation / Business Rule**: verifies that invalid inputs, such as missing fields, invalid values, malformed JSON, or duplicate data, are rejected with proper error responses.
 - **Error Handling**: verifies that not-found scenarios and error responses follow a consistent JSON structure with correct status codes and standardized fields such as `code`, `type`, and `message`.
 
-## how to run
-enviroment variebles
-copy .env.example .env
-Run with Docker
+## How to run
+### Environment Variables
+Copy `.env.example` to `.env`.
+
+### Run with Docker
+```bash
 docker compose up -d
 API documentation:
 https://project-task-api-q2o5.onrender.com/docs
 
-## Project structure
-app/ 
-    routes/
-    service/
-    model/
+## Project Structure
+```text
+app/
+  routes/
+  service/
+  model/
 tests/
 docker-compose.yml
-READNE.md
+README.md
