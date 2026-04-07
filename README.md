@@ -70,7 +70,7 @@ test can be executed with pytest.
 
 ## Document
 - [Test Plan](docs/test-plan-v1.md)
-- [Test Cases](docs/Text_case.md)
+- [Test Cases](docs/text_cases.md)
 
 ## Test Coverage Categories
 
