@@ -71,6 +71,7 @@ tests can be executed with pytest.
 ## Documents
 - [Test Plan](docs/test-plan-v1.md)
 - [Test Cases](docs/test_cases.md)
+- [Sample bug reports](docs/bug-report-samples.md)
 
 ## Test Coverage Categories
 
