@@ -12,6 +12,7 @@ from app.extensions import init_extensions
 from app.routes import api
 from app.auth import auth_bp
 from app.docs import docs_bp
+from app.page import page_bp
 from app.exceptions import AppError
 def create_app(config_override=None):
     app = Flask(__name__)
@@ -53,6 +54,7 @@ def create_app(config_override=None):
     app.register_blueprint(api)
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(docs_bp)
+    app.register_blueprint(page_bp)
     logging.basicConfig(
         level=logging.INFO,
         format= "%(asctime)s %(name)s %(levelname)s %(message)s" )

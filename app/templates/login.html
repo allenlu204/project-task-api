@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>登入 Secure Task Management</title>
+  <style>
+    :root {
+      --bg: #111827;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1f2937;
+      --accent-2: #374151;
+      --success: #166534;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --success-bg: #f0fdf4;
+      --shadow: 0 12px 30px rgba(17, 24, 39, 0.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(17,24,39,.58), rgba(17,24,39,.58)),
+        radial-gradient(circle at top left, rgba(255,255,255,.14), transparent 40%),
+        linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      min-height: 100vh;
+    }
+    .wrapper {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    .site-header {
+      padding: 1.25rem 1rem 0;
+      text-align: center;
+    }
+    .site-logo {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      border: 2px solid rgba(255,255,255,.9);
+      padding: .75rem 1rem;
+      font-weight: 700;
+      font-size: .88rem;
+    }
+    .main {
+      display: grid;
+      place-items: center;
+      padding: 2rem 1rem 3rem;
+    }
+    .panel {
+      width: 100%;
+      max-width: 680px;
+      background: var(--panel);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 2rem 1.5rem;
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .hero {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      margin: 0 0 .75rem;
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
+      line-height: 1.15;
+      letter-spacing: .02em;
+    }
+    .hero p {
+      margin: 0 auto;
+      max-width: 46rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .form-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .field label {
+      display: block;
+      margin-bottom: .45rem;
+      font-weight: 700;
+      font-size: .95rem;
+    }
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: .9rem .95rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+      background: #fff;
+    }
+    .field input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 4px rgba(55,65,81,.12);
+    }
+    .actions {
+      margin-top: .5rem;
+      display: flex;
+      justify-content: flex-start;
+    }
+    .button {
+      appearance: none;
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: .9rem 1.2rem;
+      font-size: .98rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s ease, transform .02s ease;
+    }
+    .button:hover { background: var(--accent-2); }
+    .button:active { transform: translateY(1px); }
+    .button[disabled] {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+    #login-message {
+      margin: 1rem 0 0;
+      min-height: 1.5rem;
+      font-size: .96rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .message-error {
+      color: var(--danger);
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: .75rem .9rem;
+    }
+    .message-success {
+      color: var(--success);
+      background: var(--success-bg);
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: .75rem .9rem;
+    }
+    .copyright {
+      text-align: center;
+      color: rgba(255,255,255,.8);
+      padding: 0 1rem 1.25rem;
+      font-size: .82rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="site-header">
+      <a href="/login" class="site-logo">STM Demo</a>
+    </header>
+
+    <main class="main">
+      <section class="panel">
+        <header class="hero">
+          <h1>登入 Secure Task Management</h1>
+          <p>歡迎使用 STM 任務管理服務，請使用 email 與 password 登入以管理 tasks。</p>
+        </header>
+
+        <form id="login-form" method="post" novalidate data-testid="login-form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="login-email">Email</label>
+              <input
+                id="login-email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                data-testid="login-email"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="login-password">Password</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                data-testid="login-password"
+                required
+              />
+            </div>
+
+            <div class="actions">
+              <button
+                id="login-submit"
+                class="button"
+                type="submit"
+                data-testid="login-submit"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+
+          <p id="login-message" data-testid="login-message" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <div class="copyright">
+      STM Playwright Demo
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const form = document.getElementById('login-form');
+      const emailInput = document.getElementById('login-email');
+      const passwordInput = document.getElementById('login-password');
+      const submitButton = document.getElementById('login-submit');
+      const message = document.getElementById('login-message');
+
+      function setMessage(text, type) {
+        message.textContent = text || '';
+        message.className = '';
+        if (type === 'error') message.classList.add('message-error');
+        if (type === 'success') message.classList.add('message-success');
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!email || !password) {
+          setMessage('Please enter both email and password.', 'error');
+          return;
+        }
+
+        setMessage('');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Logging in...';
+
+        try {
+          const response = await fetch('/api/v1/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            const errorMessage =
+              data && data.error && data.error.message
+                ? data.error.message
+                : 'Login failed';
+            setMessage(errorMessage, 'error');
+            return;
+          }
+
+          const accessToken = data.access_token;
+          const userId = data.user_id;
+
+          if (!accessToken || !userId) {
+            setMessage('Login response is missing token or user id.', 'error');
+            return;
+          }
+
+          sessionStorage.setItem('access_token', accessToken);
+          sessionStorage.setItem('user_id', String(userId));
+
+          setMessage('Login successful. Redirecting...', 'success');
+          window.location.href = '/tasks';
+        } catch (error) {
+          setMessage('Unable to reach login service. Please try again.', 'error');
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Login';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
