@@ -140,7 +140,7 @@ Access token：provided for non-owner authenticated user
 - Test Item：Validation
 - Scenario：Authenticated user sends patch request without valid status value.
 - Precondition：
-The autheticated user exist in the system.
+The authenticated user exist in the system.
 The target task exist in the system and belongs to the  authenticated user.
 The patch task endpoint is available, protected by authentication and also subject to authorization checks.
 The access token belongs to the authenticated user.

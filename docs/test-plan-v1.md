@@ -47,7 +47,7 @@ Testing will be prioritized based on business criticality / risk level /
 impact on basic operation / impact scope.
 
 ## Risks
-If token-based authentication fails,the system may not be accessible to valid user or or unauthorize user may enter the system.
+If token-based authentication fails,the system may not be accessible to valid user or unauthorize user may enter the system.
 If ownership-based authorization fails, core access control may break down, allowing improper operation on protected resources.
 If task update operations fails, unauthorized modifications and incorrect data updates may occur.
 If task deletion fails, the important data may be lost and may not be recoverable. 
